@@ -14,7 +14,7 @@ public typealias Padding = SecPadding
 
 public enum SwiftyRSA {
     
-    static func base64String(pemEncoded pemString: String) throws -> String {
+    public static func base64String(pemEncoded pemString: String) throws -> String {
         let lines = pemString.components(separatedBy: "\n").filter { line in
             return !line.hasPrefix("-----BEGIN") && !line.hasPrefix("-----END")
         }
@@ -26,7 +26,7 @@ public enum SwiftyRSA {
         return lines.joined(separator: "")
     }
     
-    static func isValidKeyReference(_ reference: SecKey, forClass requiredClass: CFString) -> Bool {
+    public static func isValidKeyReference(_ reference: SecKey, forClass requiredClass: CFString) -> Bool {
         
         guard #available(iOS 10.0, *), #available(watchOS 3.0, *), #available(tvOS 10.0, *) else {
             return true
@@ -42,7 +42,7 @@ public enum SwiftyRSA {
         return isRSA && isValidClass
     }
     
-    static func format(keyData: Data, withPemType pemType: String) -> String {
+    public static func format(keyData: Data, withPemType pemType: String) -> String {
         
         func split(_ str: String, byChunksOfLength length: Int) -> [String] {
             return stride(from: 0, to: str.count, by: length).map { index -> String in
@@ -66,7 +66,7 @@ public enum SwiftyRSA {
         return pem.joined(separator: "\n")
     }
     
-    static func data(forKeyReference reference: SecKey) throws -> Data {
+    public static func data(forKeyReference reference: SecKey) throws -> Data {
         
         // On iOS+, we can use `SecKeyCopyExternalRepresentation` directly
         if #available(iOS 10.0, *), #available(watchOS 3.0, *), #available(tvOS 10.0, *) {
@@ -119,7 +119,7 @@ public enum SwiftyRSA {
     }
     
     @available(iOS 10.0, watchOS 3.0, tvOS 10.0, *)
-    static func generateRSAKeyPair(sizeInBits size: Int, applyUnitTestWorkaround: Bool = false) throws -> (privateKey: PrivateKey, publicKey: PublicKey) {
+    public static func generateRSAKeyPair(sizeInBits size: Int, applyUnitTestWorkaround: Bool = false) throws -> (privateKey: PrivateKey, publicKey: PublicKey) {
       
         guard let tagData = UUID().uuidString.data(using: .utf8) else {
             throw SwiftyRSAError.stringToDataConversionFailed
@@ -150,7 +150,7 @@ public enum SwiftyRSA {
         return (privateKey: privateKey, publicKey: publicKey)
     }
     
-    static func addKey(_ keyData: Data, isPublic: Bool, tag: String) throws ->  SecKey {
+    public static func addKey(_ keyData: Data, isPublic: Bool, tag: String) throws ->  SecKey {
         
         let keyData = keyData
         
@@ -245,7 +245,7 @@ public enum SwiftyRSA {
      Example of key with X509 header (notice the additional ASN.1 sequence):
      https://lapo.it/asn1js/#30819F300D06092A864886F70D010101050003818D0030818902818100D0674615A252ED3D75D2A3073A0A8A445F3188FD3BEB8BA8584F7299E391BDEC3427F287327414174997D147DD8CA62647427D73C9DA5504E0A3EED5274A1D50A1237D688486FADB8B82061675ABFA5E55B624095DB8790C6DBCAE83D6A8588C9A6635D7CF257ED1EDE18F04217D37908FD0CBB86B2C58D5F762E6207FF7B92D0203010001
      */
-    static func stripKeyHeader(keyData: Data) throws -> Data {
+    public static func stripKeyHeader(keyData: Data) throws -> Data {
         
         let node: Asn1Parser.Node
         do {
@@ -305,7 +305,7 @@ public enum SwiftyRSA {
                         INTEGER -- public exponent
      */
     
-    static func prependX509KeyHeader(keyData: Data) throws -> Data {
+    public static func prependX509KeyHeader(keyData: Data) throws -> Data {
         if try keyData.isAnHeaderlessKey() {
             let x509certificate: Data = keyData.prependx509Header()
             return x509certificate
@@ -316,7 +316,7 @@ public enum SwiftyRSA {
         }
     }
     
-    static func removeKey(tag: String) {
+    public static func removeKey(tag: String) {
         
         guard let tagData = tag.data(using: .utf8) else {
             return
